@@ -13,6 +13,10 @@ class Line
 private:
 
 	sf::RectangleShape* line;
+	std::pair<int, int> lineCoord;
+
+
+	
 
 	// Radius
 	float dotR;
@@ -20,8 +24,12 @@ private:
 	int marginOffset;
 	int topOffset;
 public:
-	Line(int dotOff, int marginOff, int topOff, float dotR);
+	// Line that has been confirmed of being connected between two dots
+	bool completed;
+
+	Line(int dotOff, int marginOff, int topOff, float dotR, int x, int y);
 
 	sf::RectangleShape* getLine();
 	void connectPair(std::pair<Dot*, Dot*> connP);
+	void connectLine();
 };

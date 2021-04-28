@@ -2,7 +2,7 @@
 #include "Line.h"
 
 
-Line::Line(int dotOff, int marginOff, int topOff, float dotR)
+Line::Line(int dotOff, int marginOff, int topOff, float dotR, int x, int y)
 {
 	this->dotR = dotR;
 	dotOffset = dotOff;
@@ -12,6 +12,11 @@ Line::Line(int dotOff, int marginOff, int topOff, float dotR)
 	line = new sf::RectangleShape(sf::Vector2f(dotOff, dotR));
 	line->setFillColor(sf::Color::Yellow);
 	line->setOrigin(0, dotR/2);
+
+	completed = false;
+
+	lineCoord = std::make_pair(x, y);
+	
 }
 
 sf::RectangleShape* Line::getLine()
@@ -45,5 +50,11 @@ void Line::connectPair(std::pair<Dot*, Dot*> connP)
 	}
 
 	line->setPosition(startPos);
+}
+
+void Line::connectLine()
+{
+	line->setFillColor(sf::Color::Black);
+	this->completed = true;
 }
 
