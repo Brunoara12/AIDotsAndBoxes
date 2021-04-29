@@ -22,7 +22,7 @@ void DotsAndBoxes::debugBoxColor()
 			i++;
 		}
 	}
-	else
+	else if (!ChainV2)
 	{
 		for (auto xB : ListOfChains)
 		{
@@ -32,7 +32,7 @@ void DotsAndBoxes::debugBoxColor()
 			}
 		}
 	}
-		
+
 	if (ChainV2)
 	{
 		int i = 0;
@@ -47,9 +47,9 @@ void DotsAndBoxes::debugBoxColor()
 			i++;
 		}
 	}
-	else
+	else if (!longChainV)
 	{
-		
+
 		for (auto xB : ListOfChains2)
 		{
 			for (Box* yB : xB)
@@ -59,6 +59,28 @@ void DotsAndBoxes::debugBoxColor()
 		}
 	}
 
+	if (ChainV1)
+	{
+		for (auto xB : ListOfChains1)
+		{
+
+			for (Box* yB : xB)
+			{
+				yB->D_setColor(sf::Color::White);
+			}
+		}
+	}
+	else if (!longChainV)
+	{
+
+		for (auto xB : ListOfChains1)
+		{
+			for (Box* yB : xB)
+			{
+				yB->D_setColor(sf::Color::Red);
+			}
+		}
+	}
 }
 
 void DotsAndBoxes::jointBoxColor()
@@ -105,6 +127,34 @@ void DotsAndBoxes::testScreen1()
 	updateVLine(3, 2);
 	updateVLine(4, 2);
 	updateVLine(0, 3);
+	updateVLine(4, 3);
+}
+
+void DotsAndBoxes::testScreen2()
+{
+	updateHLine(0, 0);
+	updateHLine(3, 0);
+	updateHLine(1, 1);
+	updateHLine(2, 1);
+	updateHLine(1, 2);
+	updateHLine(0, 2);
+	updateHLine(0, 4);
+	updateHLine(1, 3);
+	updateHLine(2, 3);
+	updateHLine(1, 4);
+	updateHLine(2, 4);
+	updateHLine(3, 4);
+
+	updateVLine(0, 0);
+	updateVLine(2, 0);
+	updateVLine(4, 0);
+	updateVLine(0, 1);
+	updateVLine(3, 1);
+	updateVLine(4, 1);
+	updateVLine(3, 2);
+	updateVLine(4, 2);
+	updateVLine(1, 2);
+	//updateVLine(0, 4);
 	updateVLine(4, 3);
 }
 
@@ -518,7 +568,7 @@ Control DotsAndBoxes::checkWhoHasControl()
 
 bool DotsAndBoxes::doubleDealChain(Play p)
 {
-	std::cout << "NUM CHAINS: " << ListOfChains.size() << std::endl;
+	/*std::cout << "NUM CHAINS: " << ListOfChains.size() << std::endl;
 	for (std::vector<Box*> chains : ListOfChains)
 	{
 		std::cout << "CHAIN: " << std::endl;
@@ -528,7 +578,7 @@ bool DotsAndBoxes::doubleDealChain(Play p)
 		{
 			std::cout << *b;
 		}
-	}
+	}*/
 	Box* leftBox = nullptr;
 	Box* rightBox = nullptr;
 	Box* upBox = nullptr;
@@ -562,8 +612,8 @@ bool DotsAndBoxes::doubleDealChain(Play p)
 		else
 		{
 			std::cout << "Y" << std::endl;
-			std::cout << "Left:" << *leftBox << "Right:" << *rightBox->prev;
-			if (leftBox == rightBox->next)
+			std::cout << "Left:" << *leftBox << "Right:" << *rightBox;
+			if (leftBox == rightBox->prev)
 			{
 				int leftPath = leftBox->numBoxBackwards(leftBox);
 				int rightPath = rightBox->numBoxForward(rightBox);
@@ -579,7 +629,7 @@ bool DotsAndBoxes::doubleDealChain(Play p)
 						closeBox(currB);
 						currB = currB->prev;
 					}
-					
+
 					// Double Cross
 					doubleCrossHelp(rightBox, true);
 				}
@@ -619,7 +669,7 @@ bool DotsAndBoxes::doubleDealChain(Play p)
 		}
 		else if (downBox == nullptr)
 		{
-			doubleCrossHelp(upBox, true);	
+			doubleCrossHelp(upBox, true);
 		}
 		else
 		{
@@ -737,9 +787,9 @@ void DotsAndBoxes::doubleCrossHelp(Box* b, bool forward)
 		boxCoordx = nextB->boxCoord.first;
 		boxCoordy = nextB->boxCoord.second;
 	}
-	
+
 	// Give Double-Cross
-	
+
 	if (!H_linesBoard[boxCoordx][boxCoordy]->completed && boxCoordy - 1 < 0) // Top Line
 	{
 		updateHLine(boxCoordx, boxCoordy);
@@ -775,7 +825,40 @@ void DotsAndBoxes::clearChain()
 			b->D_setColor(sf::Color::Red);
 		}
 	}
+	for (auto chain : ListOfChains2)
+	{
+		int chainLen = 0;
+		int sndChain = 0;
+		bool reverse = false;
+		int reversePx = 0;
+		int reversePy = 0;
+		for (Box* b : chain)
+		{
+			b->chainLen = 0;
+			b->next = nullptr;
+			b->prev = nullptr;
+			b->D_setColor(sf::Color::Red);
+		}
+	}
+	for (auto chain : ListOfChains1)
+	{
+		int chainLen = 0;
+		int sndChain = 0;
+		bool reverse = false;
+		int reversePx = 0;
+		int reversePy = 0;
+		for (Box* b : chain)
+		{
+			b->chainLen = 0;
+			b->next = nullptr;
+			b->prev = nullptr;
+			b->D_setColor(sf::Color::Red);
+		}
+	}
+	ListOfChains1.clear();
 	ListOfChains.clear();
+	ListOfChains2.clear();
+
 }
 
 void DotsAndBoxes::checkBoardForChains()
@@ -827,10 +910,7 @@ void DotsAndBoxes::checkBoardForChains()
 			}
 			if (s > 2 && chain.size() > 0)
 				ListOfChains.push_back(chain);
-			else if (s == 2 && chain.size() > 0)
-				ListOfChains2.push_back(chain);
-			else if (s == 1 && chain.size() > 0)
-				ListOfChains1.push_back(chain);
+
 			chain.clear();
 			//std::cout << "S: " << s << std::endl;
 		}
@@ -854,19 +934,19 @@ void DotsAndBoxes::checkBoardForChains()
 					reverse = true;
 					reversePx = b->boxCoord.first;
 					reversePy = b->boxCoord.second + 1;
-					if (b->boxCoord.first + 1 == dotsX - 1 || board[b->boxCoord.first+1][b->boxCoord.second]->valence > 2)
+					if (b->boxCoord.first + 1 == dotsX - 1 || board[b->boxCoord.first + 1][b->boxCoord.second]->valence > 2)
 					{
 						b->prev = chain[chainLen + 1];
 						b->next = nullptr;
 					}
-					else 
+					else
 					{
 						b->next = chain[chainLen + 1];
 						b->next->prev = b;
 						b->prev = nullptr;
 					}
 				}
-				else 
+				else
 				{
 					b->next = chain[chainLen + 1];
 					b->next->prev = b;
@@ -899,6 +979,73 @@ void DotsAndBoxes::checkBoardForChains()
 			chainLen++;
 			b->chainLen = chain.size();
 		}
+	}
+	for (auto xB : board)
+	{
+		for (Box* yB : xB)
+		{
+			yB->visited = false;
+
+		}
+	}
+
+}
+
+void DotsAndBoxes::checkBoardForChain2()
+{
+	for (int i = 0; i < dotsX - 1; i++)
+	{
+		std::vector<Box*> chain;
+		int s = 0;
+		for (int j = 0; j < dotsY - 1; j++)
+		{
+			if (board[i][j]->valence == 2 && !board[i][j]->visited)
+			{
+				s = chainHelper(i, j, chain);
+
+				if (i + 1 < dotsX - 1 && !board[i + 1][j]->visited) // Check Right
+				{
+					if (!V_linesBoard[i + 1][j]->completed) // Empty line between Boxes
+					{
+						//std::cout << "1+ RIGHT\n";
+						s += chainHelper(i + 1, j, chain);
+					}
+				}
+				if (j + 1 < dotsY - 1 && !board[i][j + 1]->visited) // Check Down
+				{
+					if (!H_linesBoard[i][j + 1]->completed) // Empty line between Boxes
+					{
+						//std::cout << "down: " << *board[i][j + 1];
+						//std::cout << "Down is clear\n";
+						//std::cout << "1+ DOWN\n";
+						s += chainHelper(i, j + 1, chain);
+					}
+				}
+				if (j - 1 >= 0 && !board[i][j - 1]->visited) // Check Up
+				{
+					if (!H_linesBoard[i][j]->completed) // Empty line between Boxes
+					{
+						//std::cout << "1+ UP\n";
+						s += chainHelper(i, j - 1, chain);
+					}
+				}
+				if (i - 1 >= 0 && !board[i - 1][j]->visited) // Check Left
+				{
+					if (!V_linesBoard[i][j]->completed) // Empty line between Boxes
+					{
+						//std::cout << "1+ LEFT\n";
+						s += chainHelper(i - 1, j, chain);
+					}
+				}
+			}
+
+			if (s == 2 && chain.size() > 0)
+				ListOfChains2.push_back(chain);
+
+			chain.clear();
+			//std::cout << "S: " << s << std::endl;
+		}
+
 	}
 
 	for (auto chain : ListOfChains2)
@@ -971,6 +1118,71 @@ void DotsAndBoxes::checkBoardForChains()
 		{
 			yB->visited = false;
 
+		}
+	}
+}
+
+void DotsAndBoxes::checkBoardForChain1()
+{
+	for (int i = 0; i < dotsX - 1; i++)
+	{
+		std::vector<Box*> chain;
+		int s = 0;
+		for (int j = 0; j < dotsY - 1; j++)
+		{
+			if (board[i][j]->valence == 2 && !board[i][j]->visited)
+			{
+				s = chainHelper(i, j, chain);
+				if (i + 1 < dotsX - 1 && !board[i + 1][j]->visited) // Check Right
+				{
+					if (!V_linesBoard[i + 1][j]->completed) // Empty line between Boxes
+					{
+						//std::cout << "1+ RIGHT\n";
+						s += chainHelper(i + 1, j, chain);
+					}
+				}
+				if (j + 1 < dotsY - 1 && !board[i][j + 1]->visited) // Check Down
+				{
+					if (!H_linesBoard[i][j + 1]->completed) // Empty line between Boxes
+					{
+						//std::cout << "down: " << *board[i][j + 1];
+						//std::cout << "Down is clear\n";
+						//std::cout << "1+ DOWN\n";
+						s += chainHelper(i, j + 1, chain);
+					}
+				}
+				if (j - 1 >= 0 && !board[i][j - 1]->visited) // Check Up
+				{
+					if (!H_linesBoard[i][j]->completed) // Empty line between Boxes
+					{
+						//std::cout << "1+ UP\n";
+						s += chainHelper(i, j - 1, chain);
+					}
+				}
+				if (i - 1 >= 0 && !board[i - 1][j]->visited) // Check Left
+				{
+					if (!V_linesBoard[i][j]->completed) // Empty line between Boxes
+					{
+						//std::cout << "1+ LEFT\n";
+						s += chainHelper(i - 1, j, chain);
+					}
+				}
+			}
+
+			if (s == 1 && chain.size() > 0)
+				ListOfChains1.push_back(chain);
+
+			chain.clear();
+			//std::cout << "S: " << s << std::endl;
+		}
+
+		for (auto xB : board)
+		{
+			for (Box* yB : xB)
+			{
+				yB->visited = false;
+
+			}
 		}
 	}
 }
@@ -1094,6 +1306,101 @@ bool DotsAndBoxes::checkForFree()
 				return true;
 
 			}
+		}
+	}
+	return false;
+}
+
+void DotsAndBoxes::halfHeartedHandout()
+{
+}
+
+void DotsAndBoxes::hardHeartedHandout()
+{
+	Box* currB = ListOfChains2[0][0];
+
+	while (currB->prev != nullptr && currB != nullptr)
+	{
+		currB = currB->prev;
+	}
+	if (currB->boxCoord.first == currB->next->boxCoord.first) // V
+	{
+		updateVLine(currB->next->boxCoord.first, currB->next->boxCoord.second);
+	}
+	else // H
+	{
+		updateHLine(currB->prev->boxCoord.first, currB->prev->boxCoord.second);
+	}
+}
+
+void DotsAndBoxes::openUp()
+{
+	Box* b = ListOfChains1[0][0];
+	int boxCoordx = b->boxCoord.first;
+	int boxCoordy = b->boxCoord.second;
+	if (!H_linesBoard[boxCoordx][boxCoordy]->completed) // Top Line
+	{
+		updateHLine(boxCoordx, boxCoordy);
+	}
+	else if (!H_linesBoard[boxCoordx][boxCoordy + 1]->completed) // Botoom Line
+	{
+		updateHLine(boxCoordx, boxCoordy + 1);
+	}
+	else if (!V_linesBoard[boxCoordx][boxCoordy]->completed) // Left Line
+	{
+		updateVLine(boxCoordx, boxCoordy);
+	}
+	else // RightLine
+	{
+		updateVLine(boxCoordx + 1, boxCoordy);
+	}
+
+}
+
+bool DotsAndBoxes::openChain(Play LastTurn)
+{
+	if (LastTurn.d == 'V')
+	{
+		if (LastTurn.x - 1 < 0) 
+		{
+			if (board[LastTurn.x][LastTurn.y]->valence < 2)
+			{
+				return true;
+			}
+		}
+		else if (LastTurn.x + 1 >= dotsX)
+		{
+			if (board[LastTurn.x - 1][LastTurn.y]->valence < 2)
+			{
+				return true;
+			}
+		}
+		else
+		{
+			if (board[LastTurn.x][LastTurn.y]->valence < 2 || board[LastTurn.x - 1][LastTurn.y]->valence < 2)
+				return true;
+		}
+	}
+	else if (LastTurn.d == 'H')
+	{
+		if (LastTurn.y - 1 < 0)
+		{
+			if (board[LastTurn.x][LastTurn.y]->valence < 2)
+			{
+				return true;
+			}
+		}
+		else if (LastTurn.y + 1 >= dotsY)
+		{
+			if (board[LastTurn.x][LastTurn.y - 1]->valence < 2)
+			{
+				return true;
+			}
+		}
+		else
+		{
+			if (board[LastTurn.x][LastTurn.y]->valence < 2 || board[LastTurn.x][LastTurn.y - 1]->valence < 2)
+				return true;
 		}
 	}
 	return false;
@@ -1235,7 +1542,7 @@ void DotsAndBoxes::pollEvents()
 		if (ev.key.code == sf::Keyboard::L)
 		{
 			longChainV = true;
-			ChainV2= false;
+			ChainV2 = false;
 			ChainV1 = false;
 		}
 		if (ev.key.code == sf::Keyboard::V)
@@ -1263,6 +1570,11 @@ void DotsAndBoxes::pollEvents()
 		if (ev.key.code == sf::Keyboard::Num1)
 		{
 			testScreen1();
+			debugUpdateBoard = true;
+		}
+		if (ev.key.code == sf::Keyboard::Num2)
+		{
+			testScreen2();
 			debugUpdateBoard = true;
 		}
 		break;
@@ -1335,10 +1647,12 @@ void DotsAndBoxes::updateLines()
 
 void DotsAndBoxes::updateDots()
 {
-	if(debugUpdateBoard)
+	if (debugUpdateBoard)
 	{
 		clearChain();
 		checkBoardForChains();
+		checkBoardForChain2();
+		checkBoardForChain1();
 		std::cout << "NUM CHAINS: " << ListOfChains.size() << std::endl;
 		for (std::vector<Box*> chains : ListOfChains)
 		{
@@ -1356,15 +1670,75 @@ void DotsAndBoxes::updateDots()
 	if (eState == Turn::Player2 && p2->isAI && !p2->thinking) // p2 is Ai and is done thinking
 	{
 		bool boxClosed = false;
+
+		/*clearChain();
+		checkBoardForChains();
+		checkBoardForChain2();
+		checkBoardForChain1();
+		std::cout << "NUM LONG CHAINS : " << ListOfChains.size() << std::endl;
+		for (std::vector<Box*> chains : ListOfChains)
+		{
+			std::cout << "CHAIN: " << std::endl;
+			Box* b = chains[0];
+			b->printBoxChain(b);
+			for (Box* b : chains)
+			{
+				std::cout << *b;
+			}
+		}
+		std::cout << "NUM 2 CHAINS : " << ListOfChains2.size() << std::endl;
+		for (std::vector<Box*> chains : ListOfChains2)
+		{
+			std::cout << "CHAIN: " << std::endl;
+			Box* b = chains[0];
+			b->printBoxChain(b);
+			for (Box* b : chains)
+			{
+				std::cout << *b;
+			}
+		}
+		std::cout << "NUM 1 CHAINS : " << ListOfChains1.size() << std::endl;
+		for (std::vector<Box*> chains : ListOfChains1)
+		{
+			std::cout << "CHAIN: " << std::endl;
+			Box* b = chains[0];
+			b->printBoxChain(b);
+			for (Box* b : chains)
+			{
+				std::cout << *b;
+			}
+		}*/
+
 		//std::cout << "AI2 Played\n";
 		bool endGame = checkEndgame();
 		//updateVLine(0, 0);
 		if (endGame)
 		{
 			std::cout << "END GAME REACHED\n";
-
+			// Not in control
 			boxClosed = !doubleDealChain(LastTurn);
 			checkBoxesComplete();
+			//if (ListOfChains2.size() != 0 && ListOfChains2.size() % 2 == 0) //even
+			//{
+			//	//Open up 1 chain
+			//	if (ListOfChains1.size() > 0)
+			//		openUp();
+			//	halfHeartedHandout();
+			//	// end turn
+			//}
+			//else if (ListOfChains2.size() % 2 == 1) //odd
+			//{
+			//	hardHeartedHandout();
+			//	//end turn
+			//}
+
+			//// If P1 opened up Chain
+			//if (openChain(LastTurn))
+			//{
+			//	std::cout << "HEY\n";
+			//	boxClosed = !doubleDealChain(LastTurn);
+			//	checkBoxesComplete();
+			//}
 
 			std::cout << "box closed: " << boxClosed << std::endl;
 		}
@@ -1384,11 +1758,13 @@ void DotsAndBoxes::updateDots()
 			}
 
 
-	
+
 		}
 
 		clearChain();
 		checkBoardForChains();
+		checkBoardForChain2();
+		checkBoardForChain1();
 		std::cout << "NUM LONG CHAINS : " << ListOfChains.size() << std::endl;
 		for (std::vector<Box*> chains : ListOfChains)
 		{
@@ -1402,6 +1778,17 @@ void DotsAndBoxes::updateDots()
 		}
 		std::cout << "NUM 2 CHAINS : " << ListOfChains2.size() << std::endl;
 		for (std::vector<Box*> chains : ListOfChains2)
+		{
+			std::cout << "CHAIN: " << std::endl;
+			Box* b = chains[0];
+			b->printBoxChain(b);
+			for (Box* b : chains)
+			{
+				std::cout << *b;
+			}
+		}
+		std::cout << "NUM 1 CHAINS : " << ListOfChains1.size() << std::endl;
+		for (std::vector<Box*> chains : ListOfChains1)
 		{
 			std::cout << "CHAIN: " << std::endl;
 			Box* b = chains[0];

@@ -46,6 +46,7 @@ private:
 	void debugBoxColor();
 	void jointBoxColor();
 	void testScreen1();
+	void testScreen2();
 
 	// Game LOGIC Var
 	int maxPoints;
@@ -114,12 +115,16 @@ private:
 	void doubleCrossHelp(Box* b, bool forward);
 	void clearChain();
 	void checkBoardForChains();
-	//void checkBoardForChain2();
-	//void checkBoardForChain1();
+	void checkBoardForChain2();
+	void checkBoardForChain1();
 	int chainHelper(int x, int y, std::vector<Box*> &chain);
 	int checkBoxForValence(int x);
 	bool checkEndgame();
 	bool checkForFree();
+	void halfHeartedHandout();
+	void hardHeartedHandout();
+	void openUp();
+	bool openChain(Play LastTurn);
 
 public:
 	DotsAndBoxes(int xDots, int yDots);
